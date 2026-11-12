@@ -1,0 +1,12 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="ARM64" />
+    <Platform Name="Any CPU" />
+  </Configurations>
+  <Project Path="EasyFileTransfer/EasyFileTransfer.csproj">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="EasyFileTransfer.Linux/EasyFileTransfer.Linux.csproj" Id="6247eb09-1b3c-49b3-9dc5-80cfad122869" />
+</Solution>

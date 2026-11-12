@@ -1,0 +1,726 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="EasyFileTransfer.MainPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#0F172A}">
+
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Spacing="14" Padding="26,16" MaximumWidthRequest="1060" HorizontalOptions="Center">
+
+                <!-- 1. トップヘッダー (アプリタイトル & 言語プルダウン & ℹ️ボタン) -->
+                <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                    <VerticalStackLayout Grid.Column="0" Spacing="3">
+                        <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                            <Image Source="title_icon.png"
+                                   WidthRequest="32"
+                                   HeightRequest="32"
+                                   Aspect="AspectFit"
+                                   VerticalOptions="Center" />
+                            <Label x:Name="LblAppTitle"
+                                   Text="簡単ファイル転送"
+                                   FontSize="22"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                        <Label x:Name="LblAppSubtitle"
+                               Text="スマホとPC間でQRコードによる高速ローカル直接転送"
+                               FontSize="12.5"
+                               TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
+                    </VerticalStackLayout>
+
+                    <!-- ヘッダー右側: 多言語選択プルダウン & ℹ️ アプリ情報ボタン -->
+                    <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                        <Border StrokeShape="RoundRectangle 8"
+                                Stroke="{AppThemeBinding Light=#CBD5E1, Dark=#334155}"
+                                StrokeThickness="1"
+                                BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E293B}"
+                                Padding="8,2"
+                                VerticalOptions="Center">
+                            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                <Label x:Name="LblLanguageTitle"
+                                       Text="🌐 言語:"
+                                       FontSize="12"
+                                       FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light=#475569, Dark=#94A3B8}"
+                                       VerticalOptions="Center" />
+                                <Picker x:Name="LanguagePicker"
+                                        FontSize="13"
+                                        FontAttributes="Bold"
+                                        TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}"
+                                        SelectedIndexChanged="OnLanguagePickerChanged"
+                                        VerticalOptions="Center">
+                                    <Picker.ItemsSource>
+                                        <x:Array Type="{x:Type x:String}">
+                                            <x:String>🇯🇵 日本語</x:String>
+                                            <x:String>🇺🇸 English</x:String>
+                                            <x:String>🇨🇳 简体中文</x:String>
+                                            <x:String>🇰🇷 한국어</x:String>
+                                            <x:String>🇹🇼 繁體中文</x:String>
+                                            <x:String>🇻🇳 Tiếng Việt</x:String>
+                                            <x:String>🇪🇸 Español</x:String>
+                                            <x:String>🇩🇪 Deutsch</x:String>
+                                            <x:String>🇫🇷 Français</x:String>
+                                            <x:String>🇵🇹 Português</x:String>
+                                            <x:String>🇮🇹 Italiano</x:String>
+                                        </x:Array>
+                                    </Picker.ItemsSource>
+                                </Picker>
+                            </HorizontalStackLayout>
+                        </Border>
+
+                        <!-- ℹ️ アプリ情報ボタン -->
+                        <Button x:Name="BtnAbout"
+                                Text="ℹ️"
+                                Clicked="OnAboutClicked"
+                                BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E293B}"
+                                BorderColor="{AppThemeBinding Light=#CBD5E1, Dark=#334155}"
+                                BorderWidth="1"
+                                CornerRadius="8"
+                                HeightRequest="36"
+                                WidthRequest="38"
+                                Padding="0"
+                                FontSize="15"
+                                VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </Grid>
+
+                <!-- 2. モード切り替えタブ (受信: スマホ→PC / 送信: PC→スマホ) -->
+                <Border StrokeShape="RoundRectangle 12"
+                        Stroke="{AppThemeBinding Light=#CBD5E1, Dark=#334155}"
+                        StrokeThickness="1"
+                        BackgroundColor="{AppThemeBinding Light=#F1F5F9, Dark=#1E293B}"
+                        Padding="4"
+                        HorizontalOptions="Fill">
+                    <Grid ColumnDefinitions="*, *" ColumnSpacing="6">
+                        <Button x:Name="BtnTabUpload"
+                                Grid.Column="0"
+                                Text="📤 受信 (スマホ → PC)"
+                                FontSize="14"
+                                FontAttributes="Bold"
+                                HeightRequest="40"
+                                CornerRadius="8"
+                                BackgroundColor="{AppThemeBinding Light=#4F46E5, Dark=#6366F1}"
+                                TextColor="White"
+                                Clicked="OnTabUploadClicked" />
+                        <Button x:Name="BtnTabDownload"
+                                Grid.Column="1"
+                                Text="📥 送信 (PC → スマホ)"
+                                FontSize="14"
+                                FontAttributes="Bold"
+                                HeightRequest="40"
+                                CornerRadius="8"
+                                BackgroundColor="Transparent"
+                                TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                                Clicked="OnTabDownloadClicked" />
+                    </Grid>
+                </Border>
+
+                <!-- 3. メインコンテンツ (2カラムグリッド) -->
+                <Grid ColumnDefinitions="380, *" ColumnSpacing="22">
+
+                    <!-- 左カラム: QRコード & 接続ステータス & 1:1セッション情報 -->
+                    <Border Grid.Column="0"
+                            StrokeShape="RoundRectangle 16"
+                            Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#334155}"
+                            StrokeThickness="1"
+                            BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E293B}"
+                            Padding="18,16"
+                            Shadow="{Shadow Brush=Black, Offset='0,4', Radius=10, Opacity=0.08}">
+                        <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
+                            <!-- タイトル (高さ固定で改行によるブレを排除) -->
+                            <Label x:Name="LblQrCodeTitle"
+                                   Text="📱 スマホでスキャンしてPCへファイルを送信"
+                                   FontSize="13.5"
+                                   FontAttributes="Bold"
+                                   HeightRequest="22"
+                                   HorizontalTextAlignment="Center"
+                                   TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+
+                            <!-- QRコード表示枠 (常に白背景) -->
+                            <Border StrokeShape="RoundRectangle 14"
+                                    Stroke="{AppThemeBinding Light=#818CF8, Dark=#6366F1}"
+                                    StrokeThickness="2"
+                                    BackgroundColor="White"
+                                    Padding="12"
+                                    WidthRequest="244"
+                                    HeightRequest="244"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center">
+                                <Image x:Name="QrCodeImage"
+                                       WidthRequest="216"
+                                       HeightRequest="216"
+                                       Aspect="AspectFit"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                            </Border>
+
+                            <!-- URL表示 & コピー & IP切替 -->
+                            <VerticalStackLayout Spacing="5" HorizontalOptions="Fill">
+                                <Label x:Name="LblUrlTitle"
+                                       Text="転送用URL:"
+                                       FontSize="11"
+                                       FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
+                                <Border StrokeShape="RoundRectangle 8"
+                                        Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#334155}"
+                                        BackgroundColor="{AppThemeBinding Light=#F1F5F9, Dark=#0F172A}"
+                                        Padding="10,7">
+                                    <Label x:Name="LblTransferUrl"
+                                           Text="http://..."
+                                           FontSize="11.5"
+                                           FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light=#4F46E5, Dark=#818CF8}"
+                                           LineBreakMode="MiddleTruncation" />
+                                </Border>
+
+                                <Grid ColumnDefinitions="*, *" ColumnSpacing="8" Margin="0,2,0,0">
+                                    <Button x:Name="BtnCopyUrl"
+                                            Grid.Column="0"
+                                            Text="📋 URLコピー"
+                                            FontSize="12"
+                                            FontAttributes="Bold"
+                                            HeightRequest="34"
+                                            CornerRadius="8"
+                                            BackgroundColor="{AppThemeBinding Light=#EEF2FF, Dark=#312E81}"
+                                            TextColor="{AppThemeBinding Light=#4F46E5, Dark=#C7D2FE}"
+                                            Clicked="OnCopyUrlClicked" />
+                                    <Button x:Name="BtnSwitchIp"
+                                            Grid.Column="1"
+                                            Text="🔄 IP切替"
+                                            FontSize="12"
+                                            FontAttributes="Bold"
+                                            HeightRequest="34"
+                                            CornerRadius="8"
+                                            BackgroundColor="{AppThemeBinding Light=#F1F5F9, Dark=#334155}"
+                                            TextColor="{AppThemeBinding Light=#334155, Dark=#E2E8F0}"
+                                            Clicked="OnSwitchIpClicked" />
+                                </Grid>
+                            </VerticalStackLayout>
+
+                            <!-- 1:1 セッション管理バー -->
+                            <Border StrokeShape="RoundRectangle 10"
+                                    Stroke="{AppThemeBinding Light=#E0E7FF, Dark=#3730A3}"
+                                    BackgroundColor="{AppThemeBinding Light=#EEF2FF, Dark=#1E1B4B}"
+                                    Padding="10,7"
+                                    HorizontalOptions="Fill">
+                                <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="6" VerticalOptions="Center">
+                                    <Label x:Name="LblSessionProtectedBadge"
+                                           Text="🔒 1:1 保護"
+                                           FontSize="11"
+                                           FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light=#4338CA, Dark=#A5B4FC}"
+                                           VerticalOptions="Center" />
+                                    <Label x:Name="LblSessionInfo"
+                                           Grid.Column="1"
+                                           Text="ID: ----"
+                                           FontSize="11"
+                                           FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light=#4F46E5, Dark=#C7D2FE}"
+                                           VerticalOptions="Center" />
+                                    <Button x:Name="BtnRegenerateSession"
+                                            Grid.Column="2"
+                                            Text="🔄 QR更新"
+                                            FontSize="11"
+                                            FontAttributes="Bold"
+                                            HeightRequest="26"
+                                            Padding="8,0"
+                                            CornerRadius="6"
+                                            BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#312E81}"
+                                            TextColor="{AppThemeBinding Light=#4338CA, Dark=#C7D2FE}"
+                                            Clicked="OnRegenerateSessionClicked"
+                                            VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+
+                            <!-- 状態表示カード -->
+                            <Border StrokeShape="RoundRectangle 10"
+                                    Stroke="{AppThemeBinding Light=#CBD5E1, Dark=#334155}"
+                                    BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#0F172A}"
+                                    Padding="10,8"
+                                    HorizontalOptions="Fill">
+                                <HorizontalStackLayout Spacing="8" VerticalOptions="Center" HorizontalOptions="Center">
+                                    <ActivityIndicator x:Name="StatusSpinner"
+                                                       IsRunning="False"
+                                                       IsVisible="False"
+                                                       Color="#4F46E5"
+                                                       WidthRequest="16"
+                                                       HeightRequest="16"
+                                                       VerticalOptions="Center" />
+                                    <Label x:Name="LblStatus"
+                                           Text="🟢 待機中（スマホからの接続を待っています）"
+                                           FontSize="11.5"
+                                           FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light=#10B981, Dark=#34D399}"
+                                           VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </Border>
+
+                            <!-- ヒント文 (高さ固定) -->
+                            <Label x:Name="LblQrHint"
+                                   Text="標準のカメラでスキャンすると、ファイル送信画面が開きます。"
+                                   FontSize="11"
+                                   HeightRequest="18"
+                                   HorizontalTextAlignment="Center"
+                                   TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- 右カラム: モード別パネル (アップロード用 / ダウンロード用) -->
+                    <Grid Grid.Column="1">
+
+                        <!-- ============================================== -->
+                        <!-- A. アップロードパネル (スマホ → PC) -->
+                        <!-- ============================================== -->
+                        <VerticalStackLayout x:Name="PanelUpload" Spacing="14" IsVisible="True">
+
+                            <!-- カード1: フォルダー設定カード -->
+                            <Border StrokeShape="RoundRectangle 14"
+                                    Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#334155}"
+                                    StrokeThickness="1"
+                                    BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E293B}"
+                                    Padding="16,14"
+                                    Shadow="{Shadow Brush=Black, Offset='0,3', Radius=8, Opacity=0.06}">
+                                <VerticalStackLayout Spacing="9">
+                                    <Label x:Name="LblTargetFolderTitle"
+                                           Text="📁 保存先フォルダー（スマホからの受信先）"
+                                           FontSize="13.5"
+                                           FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+
+                                    <Border StrokeShape="RoundRectangle 8"
+                                            Stroke="{AppThemeBinding Light=#CBD5E1, Dark=#475569}"
+                                            BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#0F172A}"
+                                            Padding="10,7">
+                                        <Label x:Name="LblTargetFolderPath"
+                                               Text="C:\Users\...\Downloads\EasyFileTransfer"
+                                               FontSize="12"
+                                               LineBreakMode="MiddleTruncation"
+                                               TextColor="{AppThemeBinding Light=#334155, Dark=#E2E8F0}" />
+                                    </Border>
+
+                                    <!-- ボタン群 (送信側と完全同一のサイズ・配置) -->
+                                    <HorizontalStackLayout Spacing="8" HorizontalOptions="End">
+                                        <Button x:Name="BtnChangeFolder"
+                                                Text="フォルダー変更"
+                                                FontSize="12"
+                                                FontAttributes="Bold"
+                                                HeightRequest="34"
+                                                CornerRadius="8"
+                                                Padding="14,0"
+                                                BackgroundColor="{AppThemeBinding Light=#F1F5F9, Dark=#334155}"
+                                                TextColor="{AppThemeBinding Light=#334155, Dark=#F1F5F9}"
+                                                Clicked="OnChangeFolderClicked" />
+                                        <Button x:Name="BtnOpenFolder"
+                                                Text="フォルダーを開く"
+                                                FontSize="12"
+                                                FontAttributes="Bold"
+                                                HeightRequest="34"
+                                                CornerRadius="8"
+                                                Padding="14,0"
+                                                BackgroundColor="{AppThemeBinding Light=#4F46E5, Dark=#6366F1}"
+                                                TextColor="White"
+                                                Clicked="OnOpenFolderClicked" />
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <!-- カード2: 簡単な説明カード -->
+                            <Border StrokeShape="RoundRectangle 14"
+                                    Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#334155}"
+                                    StrokeThickness="1"
+                                    BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E293B}"
+                                    Padding="16,14"
+                                    Shadow="{Shadow Brush=Black, Offset='0,3', Radius=8, Opacity=0.06}">
+                                <VerticalStackLayout Spacing="8">
+                                    <Label x:Name="LblInstructionsTitle"
+                                           Text="💡 スマホ → PC 受信の使い方"
+                                           FontSize="13.5"
+                                           FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+
+                                    <VerticalStackLayout Spacing="4">
+                                        <Label x:Name="LblStep1"
+                                               Text="1. PCとスマホを同じWi-Fi（同一ネットワーク）に接続します。"
+                                               FontSize="12"
+                                               TextColor="{AppThemeBinding Light=#475569, Dark=#CBD5E1}" />
+                                        <Label x:Name="LblStep2"
+                                               Text="2. スマホの標準カメラで左のQRコードをスキャンします。"
+                                               FontSize="12"
+                                               TextColor="{AppThemeBinding Light=#475569, Dark=#CBD5E1}" />
+                                        <Label x:Name="LblStep3"
+                                               Text="3. 開いたWeb画面で画像・PDF・CSV・GPX・Zip等を選んで送信すると、PCに即時保存されます！"
+                                               FontSize="12"
+                                               TextColor="{AppThemeBinding Light=#475569, Dark=#CBD5E1}" />
+                                    </VerticalStackLayout>
+
+                                    <Border StrokeShape="RoundRectangle 8"
+                                            Stroke="#C7D2FE"
+                                            BackgroundColor="{AppThemeBinding Light=#EEF2FF, Dark=#1E1B4B}"
+                                            Padding="10,6">
+                                        <Label x:Name="LblSecurityNote"
+                                               Text="🔒 インターネットを経由せず、同一Wi-Fi内だけで安全・高速に直接転送されます。"
+                                               FontSize="11"
+                                               TextColor="{AppThemeBinding Light=#4338CA, Dark=#A5B4FC}" />
+                                    </Border>
+
+                                    <Label x:Name="LblNetworkTrouble"
+                                           Text="※ 繋がらない場合は「IP切替」を試すか、ルーターの「プライバシーセパレーター」が無効かご確認ください。"
+                                           FontSize="10.5"
+                                           TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <!-- カード3: ファイル一覧カード -->
+                            <Border StrokeShape="RoundRectangle 14"
+                                    Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#334155}"
+                                    StrokeThickness="1"
+                                    BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E293B}"
+                                    Padding="16,14"
+                                    Shadow="{Shadow Brush=Black, Offset='0,3', Radius=8, Opacity=0.06}">
+                                <VerticalStackLayout Spacing="9">
+                                    <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                                        <Label x:Name="LblReceivedTitle"
+                                               Text="📋 受信したファイル一覧"
+                                               FontSize="13.5"
+                                               FontAttributes="Bold"
+                                               TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}"
+                                               VerticalOptions="Center" />
+                                        <HorizontalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                                            <Button x:Name="BtnRefreshReceived"
+                                                    Text="🔄 更新"
+                                                    FontSize="11"
+                                                    FontAttributes="Bold"
+                                                    HeightRequest="28"
+                                                    Padding="10,0"
+                                                    CornerRadius="6"
+                                                    BackgroundColor="{AppThemeBinding Light=#F1F5F9, Dark=#334155}"
+                                                    TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                                                    Clicked="OnRefreshReceivedClicked" />
+                                            <Button x:Name="BtnClearList"
+                                                    Text="履歴クリア"
+                                                    FontSize="11"
+                                                    FontAttributes="Bold"
+                                                    HeightRequest="28"
+                                                    Padding="10,0"
+                                                    CornerRadius="6"
+                                                    BackgroundColor="{AppThemeBinding Light=#F1F5F9, Dark=#334155}"
+                                                    TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                                                    Clicked="OnClearListClicked" />
+                                        </HorizontalStackLayout>
+                                    </Grid>
+
+                                    <!-- 空状態メッセージ (高さ固定でガタつきを防止) -->
+                                    <Grid x:Name="EmptyReceivedContainer" HeightRequest="56">
+                                        <Label x:Name="LblEmptyList"
+                                               Text="まだ受信したファイルはありません。スマホから送信してください。"
+                                               FontSize="12"
+                                               TextColor="{AppThemeBinding Light=#94A3B8, Dark=#64748B}"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center" />
+                                    </Grid>
+
+                                    <VerticalStackLayout x:Name="ReceivedFilesStack" Spacing="6" />
+                                </VerticalStackLayout>
+                            </Border>
+
+                        </VerticalStackLayout>
+
+                        <!-- ============================================== -->
+                        <!-- B. ダウンロードパネル (PC → スマホ) -->
+                        <!-- ============================================== -->
+                        <VerticalStackLayout x:Name="PanelDownload" Spacing="14" IsVisible="False">
+
+                            <!-- カード1: フォルダー設定カード -->
+                            <Border StrokeShape="RoundRectangle 14"
+                                    Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#334155}"
+                                    StrokeThickness="1"
+                                    BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E293B}"
+                                    Padding="16,14"
+                                    Shadow="{Shadow Brush=Black, Offset='0,3', Radius=8, Opacity=0.06}">
+                                <VerticalStackLayout Spacing="9">
+                                    <Label x:Name="LblDownloadFolderTitle"
+                                           Text="📁 送信用フォルダー（スマホへ共有するPCフォルダー）"
+                                           FontSize="13.5"
+                                           FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+
+                                    <Border StrokeShape="RoundRectangle 8"
+                                            Stroke="{AppThemeBinding Light=#CBD5E1, Dark=#475569}"
+                                            BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#0F172A}"
+                                            Padding="10,7">
+                                        <Label x:Name="LblDownloadFolderPath"
+                                               Text="C:\Users\...\Downloads\EasyFileTransfer\Shared"
+                                               FontSize="12"
+                                               LineBreakMode="MiddleTruncation"
+                                               TextColor="{AppThemeBinding Light=#334155, Dark=#E2E8F0}" />
+                                    </Border>
+
+                                    <!-- ボタン群 (受信側と完全同一のサイズ・配置) -->
+                                    <HorizontalStackLayout Spacing="8" HorizontalOptions="End">
+                                        <Button x:Name="BtnChangeDownloadFolder"
+                                                Text="フォルダー変更"
+                                                FontSize="12"
+                                                FontAttributes="Bold"
+                                                HeightRequest="34"
+                                                CornerRadius="8"
+                                                Padding="14,0"
+                                                BackgroundColor="{AppThemeBinding Light=#F1F5F9, Dark=#334155}"
+                                                TextColor="{AppThemeBinding Light=#334155, Dark=#F1F5F9}"
+                                                Clicked="OnChangeDownloadFolderClicked" />
+                                        <Button x:Name="BtnOpenDownloadFolder"
+                                                Text="フォルダーを開く"
+                                                FontSize="12"
+                                                FontAttributes="Bold"
+                                                HeightRequest="34"
+                                                CornerRadius="8"
+                                                Padding="14,0"
+                                                BackgroundColor="{AppThemeBinding Light=#4F46E5, Dark=#6366F1}"
+                                                TextColor="White"
+                                                Clicked="OnOpenDownloadFolderClicked" />
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <!-- カード2: 簡単な説明カード -->
+                            <Border StrokeShape="RoundRectangle 14"
+                                    Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#334155}"
+                                    StrokeThickness="1"
+                                    BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E293B}"
+                                    Padding="16,14"
+                                    Shadow="{Shadow Brush=Black, Offset='0,3', Radius=8, Opacity=0.06}">
+                                <VerticalStackLayout Spacing="8">
+                                    <Label x:Name="LblDownloadInstructionsTitle"
+                                           Text="💡 PC → スマホ 送信（ダウンロード）の使い方"
+                                           FontSize="13.5"
+                                           FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+
+                                    <VerticalStackLayout Spacing="4">
+                                        <Label x:Name="LblDownloadStep1"
+                                               Text="1. 送信用フォルダーに、スマホへ送りたいファイルを追加します。"
+                                               FontSize="12"
+                                               TextColor="{AppThemeBinding Light=#475569, Dark=#CBD5E1}" />
+                                        <Label x:Name="LblDownloadStep2"
+                                               Text="2. スマホの標準カメラで左のQRコードをスキャンします。"
+                                               FontSize="12"
+                                               TextColor="{AppThemeBinding Light=#475569, Dark=#CBD5E1}" />
+                                        <Label x:Name="LblDownloadStep3"
+                                               Text="3. 開いたWeb画面でファイル一覧からタップすると、スマホへ直接ダウンロードされます！"
+                                               FontSize="12"
+                                               TextColor="{AppThemeBinding Light=#475569, Dark=#CBD5E1}" />
+                                    </VerticalStackLayout>
+
+                                    <Border StrokeShape="RoundRectangle 8"
+                                            Stroke="#C7D2FE"
+                                            BackgroundColor="{AppThemeBinding Light=#EEF2FF, Dark=#1E1B4B}"
+                                            Padding="10,6">
+                                        <Label x:Name="LblDownloadSecurityNote"
+                                               Text="🔒 インターネットを経由せず、同一Wi-Fi内だけで安全・高速に直接転送されます。"
+                                               FontSize="11"
+                                               TextColor="{AppThemeBinding Light=#4338CA, Dark=#A5B4FC}" />
+                                    </Border>
+
+                                    <!-- 注記行 (受信側と完全同一の高さ・配置) -->
+                                    <Label x:Name="LblDownloadNetworkTrouble"
+                                           Text="※ 繋がらない場合は「IP切替」を試すか、ルーターの「プライバシーセパレーター」が無効かご確認ください。"
+                                           FontSize="10.5"
+                                           TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <!-- カード3: ファイル一覧カード -->
+                            <Border StrokeShape="RoundRectangle 14"
+                                    Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#334155}"
+                                    StrokeThickness="1"
+                                    BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E293B}"
+                                    Padding="16,14"
+                                    Shadow="{Shadow Brush=Black, Offset='0,3', Radius=8, Opacity=0.06}">
+                                <VerticalStackLayout Spacing="9">
+                                    <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                                        <Label x:Name="LblSharedFilesTitle"
+                                               Text="📂 共有中のファイル一覧（PC側）"
+                                               FontSize="13.5"
+                                               FontAttributes="Bold"
+                                               TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}"
+                                               VerticalOptions="Center" />
+                                        <HorizontalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                                            <Button x:Name="BtnAddFilesToShare"
+                                                    Text="＋ ファイル追加"
+                                                    FontSize="11"
+                                                    FontAttributes="Bold"
+                                                    HeightRequest="28"
+                                                    Padding="10,0"
+                                                    CornerRadius="6"
+                                                    BackgroundColor="{AppThemeBinding Light=#EEF2FF, Dark=#312E81}"
+                                                    TextColor="{AppThemeBinding Light=#4F46E5, Dark=#C7D2FE}"
+                                                    Clicked="OnAddFilesToShareClicked" />
+                                            <Button x:Name="BtnRefreshSharedFiles"
+                                                    Text="🔄 更新"
+                                                    FontSize="11"
+                                                    FontAttributes="Bold"
+                                                    HeightRequest="28"
+                                                    Padding="10,0"
+                                                    CornerRadius="6"
+                                                    BackgroundColor="{AppThemeBinding Light=#F1F5F9, Dark=#334155}"
+                                                    TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                                                    Clicked="OnRefreshSharedFilesClicked" />
+                                        </HorizontalStackLayout>
+                                    </Grid>
+
+                                    <!-- 空状態メッセージ (高さ固定でガタつきを防止) -->
+                                    <Grid x:Name="EmptySharedContainer" HeightRequest="56">
+                                        <Label x:Name="LblEmptySharedList"
+                                               Text="送信用フォルダーにファイルがありません。「＋ファイル追加」またはフォルダーに配置してください。"
+                                               FontSize="12"
+                                               TextColor="{AppThemeBinding Light=#94A3B8, Dark=#64748B}"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center" />
+                                    </Grid>
+
+                                    <VerticalStackLayout x:Name="SharedFilesStack" Spacing="6" />
+                                </VerticalStackLayout>
+                            </Border>
+
+                        </VerticalStackLayout>
+
+                    </Grid>
+                </Grid>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- ======================================================== -->
+        <!-- アプリ情報モーダル (バージョン・説明・ホームページ・Instagram) -->
+        <!-- ======================================================== -->
+        <Grid x:Name="AboutModalOverlay"
+              BackgroundColor="#99000000"
+              IsVisible="False"
+              HorizontalOptions="Fill" VerticalOptions="Fill">
+            <!-- 背景タップで閉じる -->
+            <BoxView BackgroundColor="Transparent" HorizontalOptions="Fill" VerticalOptions="Fill">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnCloseAboutModalClicked" />
+                </BoxView.GestureRecognizers>
+            </BoxView>
+
+            <Border BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E293B}"
+                    Stroke="{AppThemeBinding Light=#CBD5E1, Dark=#334155}"
+                    StrokeShape="RoundRectangle 16"
+                    StrokeThickness="1"
+                    Padding="22,20"
+                    Margin="16,24"
+                    WidthRequest="380"
+                    MaximumWidthRequest="420"
+                    HorizontalOptions="Center" VerticalOptions="Center">
+                <Border.Shadow>
+                    <Shadow Brush="#80000000" Offset="0,8" Radius="16" Opacity="0.4" />
+                </Border.Shadow>
+
+                <VerticalStackLayout Spacing="14">
+                    <!-- タイトル & 閉じる✕ボタン -->
+                    <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                        <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                            <Border StrokeShape="RoundRectangle 6" StrokeThickness="0" WidthRequest="26" HeightRequest="26" VerticalOptions="Center">
+                                <Image Source="title_icon.png" Aspect="AspectFit" />
+                            </Border>
+                            <Label x:Name="AboutTitleLabel"
+                                   Text="簡単ファイル転送"
+                                   FontSize="16" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                        <Button Grid.Column="1" Text="✕"
+                                Clicked="OnCloseAboutModalClicked"
+                                BackgroundColor="Transparent"
+                                TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                                FontSize="18" WidthRequest="34" HeightRequest="34" Padding="0" />
+                    </Grid>
+
+                    <!-- バージョン -->
+                    <Label x:Name="AboutVersionLabel"
+                           FontSize="12"
+                           TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}" />
+
+                    <!-- 説明文 -->
+                    <Label x:Name="AboutDescriptionLabel"
+                           Text="スマホとPC間でQRコードによる双方向ファイル直接転送ツール&#10;ローカルネットワーク内で安心・安全・高速にファイル転送します。"
+                           FontSize="13" LineHeight="1.3"
+                           TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+
+                    <!-- 区切り線 -->
+                    <BoxView HeightRequest="1"
+                             Margin="0,2"
+                             Color="{AppThemeBinding Light=#E2E8F0, Dark=#334155}" />
+
+                    <!-- 外部リンク (ホームページ & Instagram) -->
+                    <VerticalStackLayout Spacing="10">
+                        <!-- ホームページ -->
+                        <Border BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#0F172A}"
+                                Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#334155}"
+                                StrokeShape="RoundRectangle 8"
+                                StrokeThickness="1"
+                                Padding="12,10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnOpenHomepageClicked" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10" VerticalOptions="Center">
+                                <Label Text="📘" FontSize="18" VerticalOptions="Center" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                    <Label x:Name="AboutHomepageTitle"
+                                           Text="ホームページ"
+                                           FontSize="12" FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+                                    <Label Text="https://sites.google.com/view/kuma-applications/%E7%B0%A1%E5%8D%98%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E8%BB%A2%E9%80%81"
+                                           FontSize="11" TextDecorations="Underline"
+                                           LineBreakMode="TailTruncation"
+                                           TextColor="{AppThemeBinding Light=#4F46E5, Dark=#818CF8}" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2" Text="↗" FontSize="14"
+                                       TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                                       VerticalOptions="Center" Margin="0,0,4,0" />
+                            </Grid>
+                        </Border>
+
+                        <!-- Instagram -->
+                        <Border BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#0F172A}"
+                                Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#334155}"
+                                StrokeShape="RoundRectangle 8"
+                                StrokeThickness="1"
+                                Padding="12,10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnOpenInstagramClicked" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10" VerticalOptions="Center">
+                                <Label Text="📸" FontSize="18" VerticalOptions="Center" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                    <Label Text="Instagram"
+                                           FontSize="12" FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light=#1E293B, Dark=#F8FAFC}" />
+                                    <Label Text="https://www.instagram.com/zefa_25_zefa/"
+                                           FontSize="11" TextDecorations="Underline"
+                                           LineBreakMode="TailTruncation"
+                                           TextColor="{AppThemeBinding Light=#4F46E5, Dark=#818CF8}" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2" Text="↗" FontSize="14"
+                                       TextColor="{AppThemeBinding Light=#64748B, Dark=#94A3B8}"
+                                       VerticalOptions="Center" Margin="0,0,4,0" />
+                            </Grid>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- 閉じるボタン -->
+                    <Button x:Name="AboutCloseButton"
+                            Text="閉じる"
+                            Clicked="OnCloseAboutModalClicked"
+                            BackgroundColor="{AppThemeBinding Light=#F1F5F9, Dark=#334155}"
+                            TextColor="{AppThemeBinding Light=#334155, Dark=#F1F5F9}"
+                            FontSize="13" CornerRadius="8" HeightRequest="38" Margin="0,4,0,0" />
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+    </Grid>
+
+</ContentPage>

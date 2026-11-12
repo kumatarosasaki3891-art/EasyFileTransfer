@@ -1,0 +1,552 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:EasyFileTransfer.Linux.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1060" d:DesignHeight="720"
+        Width="1060" Height="720" MinWidth="850" MinHeight="560"
+        x:Class="EasyFileTransfer.Linux.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Icon="/Assets/title_icon.png"
+        Title="{Binding AppTitle}">
+
+    <Window.Styles>
+        <!-- カード風 Border のスタイル -->
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="14" />
+        </Style>
+
+        <Style Selector="Border.subcard">
+            <Setter Property="Background" Value="{DynamicResource SubcardBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="10" />
+        </Style>
+
+        <!-- ボタンのモダン共通スタイル -->
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#4F46E5" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="14,8" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="Button.primary:pointerover">
+            <Setter Property="Background" Value="#4338CA" />
+        </Style>
+
+        <Style Selector="Button.secondary">
+            <Setter Property="Background" Value="{DynamicResource SubcardBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="12,6" />
+        </Style>
+
+        <Style Selector="Button.tabActive">
+            <Setter Property="Background" Value="#4F46E5" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Button.tabActive:pointerover">
+            <Setter Property="Background" Value="#4338CA" />
+        </Style>
+
+        <Style Selector="Button.tabInactive">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Button.tabInactive:pointerover">
+            <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+        </Style>
+    </Window.Styles>
+
+    <Window.Resources>
+        <!-- テーマ別ブラシ定義 -->
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#F8FAFC" />
+                    <SolidColorBrush x:Key="CardBackgroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="SubcardBackgroundBrush" Color="#F1F5F9" />
+                    <SolidColorBrush x:Key="CardBorderBrush" Color="#CBD5E1" />
+                    <SolidColorBrush x:Key="PrimaryTextBrush" Color="#1E293B" />
+                    <SolidColorBrush x:Key="MutedTextBrush" Color="#64748B" />
+                    <SolidColorBrush x:Key="AccentBadgeBrush" Color="#EEF2FF" />
+                    <SolidColorBrush x:Key="AccentBadgeTextBrush" Color="#4F46E5" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#0F172A" />
+                    <SolidColorBrush x:Key="CardBackgroundBrush" Color="#1E293B" />
+                    <SolidColorBrush x:Key="SubcardBackgroundBrush" Color="#334155" />
+                    <SolidColorBrush x:Key="CardBorderBrush" Color="#475569" />
+                    <SolidColorBrush x:Key="PrimaryTextBrush" Color="#F8FAFC" />
+                    <SolidColorBrush x:Key="MutedTextBrush" Color="#94A3B8" />
+                    <SolidColorBrush x:Key="AccentBadgeBrush" Color="#312E81" />
+                    <SolidColorBrush x:Key="AccentBadgeTextBrush" Color="#A5B4FC" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Background="{DynamicResource AppBackgroundBrush}">
+        <!-- メインスクロールエリア -->
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <Grid HorizontalAlignment="Stretch">
+                <!-- コンテンツ幅を常に最大幅(1008px)まで完全に展開し、タブ切替時の左右ズレ(幅のガタつき)を完全に防止 -->
+                <StackPanel Spacing="14" Margin="26,16" MaxWidth="1008" HorizontalAlignment="Stretch">
+
+                <!-- 1. トップヘッダー (アプリタイトル & 言語ピッカー & ℹ️ボタン) -->
+                <Grid ColumnDefinitions="*, Auto">
+                    <StackPanel Grid.Column="0" Spacing="2">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Image Source="/Assets/title_icon.png" Width="30" Height="30" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding AppTitle}" FontSize="22" FontWeight="Bold"
+                                       Foreground="{DynamicResource PrimaryTextBrush}" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock Text="{Binding AppSubtitle}" FontSize="12.5"
+                                   Foreground="{DynamicResource MutedTextBrush}" Margin="40,0,0,0" />
+                    </StackPanel>
+
+                    <!-- 右側: 言語選択プルダウン & ℹ️ アプリ情報ボタン -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <Border Classes="subcard" Padding="8,2">
+                            <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding LanguageLabel}" FontSize="12" FontWeight="Bold"
+                                           Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" />
+                                <ComboBox SelectedIndex="{Binding SelectedLanguageIndex}" FontSize="12"
+                                          VerticalAlignment="Center">
+                                    <ComboBoxItem>🇯🇵 日本語</ComboBoxItem>
+                                    <ComboBoxItem>🇺🇸 English</ComboBoxItem>
+                                    <ComboBoxItem>🇨🇳 简体中文</ComboBoxItem>
+                                    <ComboBoxItem>🇰🇷 한국어</ComboBoxItem>
+                                    <ComboBoxItem>🇹🇼 繁體中文</ComboBoxItem>
+                                    <ComboBoxItem>🇻🇳 Tiếng Việt</ComboBoxItem>
+                                    <ComboBoxItem>🇪🇸 Español</ComboBoxItem>
+                                    <ComboBoxItem>🇩🇪 Deutsch</ComboBoxItem>
+                                    <ComboBoxItem>🇫🇷 Français</ComboBoxItem>
+                                    <ComboBoxItem>🇵🇹 Português</ComboBoxItem>
+                                    <ComboBoxItem>🇮🇹 Italiano</ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+                        </Border>
+
+                        <Button Command="{Binding OpenAboutCommand}" Classes="secondary"
+                                Width="38" Height="34" Padding="0" ToolTip.Tip="{Binding ToolTipAbout}"
+                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                            <TextBlock Text="ℹ️" FontSize="15" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <!-- 2. モード切り替えタブ (受信: スマホ→PC / 送信: PC→スマホ) -->
+                <Border Classes="subcard" Padding="4">
+                    <Grid ColumnDefinitions="*, *" ColumnSpacing="6">
+                        <!-- 受信タブ -->
+                        <Button Grid.Column="0" Command="{Binding SwitchToUploadCommand}"
+                                Classes.tabActive="{Binding IsUploadMode}"
+                                Classes.tabInactive="{Binding IsDownloadMode}"
+                                HorizontalAlignment="Stretch" Height="40">
+                            <TextBlock Text="{Binding TabUploadText}" FontSize="14" />
+                        </Button>
+
+                        <!-- 送信タブ -->
+                        <Button Grid.Column="1" Command="{Binding SwitchToDownloadCommand}"
+                                Classes.tabActive="{Binding IsDownloadMode}"
+                                Classes.tabInactive="{Binding IsUploadMode}"
+                                HorizontalAlignment="Stretch" Height="40">
+                            <TextBlock Text="{Binding TabDownloadText}" FontSize="14" />
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <!-- 3. メインコンテンツ (左右2カラムレイアウト) -->
+                <Grid ColumnDefinitions="380, *" ColumnSpacing="22">
+
+                    <!-- ============================================== -->
+                    <!-- 左カラム: QRコード & 接続ステータス & 1:1セッション -->
+                    <!-- ============================================== -->
+                    <StackPanel Grid.Column="0" Spacing="12">
+
+                        <!-- QRコード表示カード -->
+                        <Border Classes="card">
+                            <StackPanel Spacing="10" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding QrCodeTitle}" FontSize="13.5" FontWeight="Bold"
+                                           Foreground="{DynamicResource PrimaryTextBrush}" TextAlignment="Center" />
+
+                                <!-- QRコード画像本体（白背景で視認性を確保） -->
+                                <Border Background="White" CornerRadius="8" Padding="12"
+                                        HorizontalAlignment="Center" BoxShadow="0 2 8 0 #15000000">
+                                    <Image Source="{Binding QrBitmap}" Width="220" Height="220" Stretch="Uniform" />
+                                </Border>
+
+                                <!-- URL表示ボックス & コピーボタン -->
+                                <StackPanel Spacing="6" Margin="0,4,0,0">
+                                    <TextBlock Text="{Binding TransferUrlLabel}" FontSize="11" FontWeight="Bold"
+                                               Foreground="{DynamicResource MutedTextBrush}" />
+                                    <Grid ColumnDefinitions="*, Auto" ColumnSpacing="6">
+                                        <TextBox Grid.Column="0" Text="{Binding TransferUrl}" IsReadOnly="True"
+                                                 FontSize="11" VerticalAlignment="Center" Padding="8,6" />
+                                        <Button Grid.Column="1" Command="{Binding CopyUrlCommand}" Classes="primary"
+                                                Padding="10,6" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding CopyButtonText}" FontSize="11" />
+                                        </Button>
+                                    </Grid>
+
+                                    <!-- 複数IP切り替えボタン -->
+                                    <Button Command="{Binding SwitchIpCommand}" Classes="secondary"
+                                            IsVisible="{Binding CanSwitchIp}" HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Center" Margin="0,2,0,0">
+                                        <TextBlock Text="{Binding SwitchIpButtonText}" FontSize="11.5" />
+                                    </Button>
+                                </StackPanel>
+
+                                <!-- 1:1 セッション保護バー -->
+                                <Border Classes="subcard" Padding="8,6" Margin="0,4,0,0">
+                                    <Grid ColumnDefinitions="Auto, *, Auto">
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding SessionProtectedBadge}" FontSize="11" FontWeight="Bold"
+                                                       Foreground="#10B981" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="{Binding SessionToken}" FontSize="11"
+                                                   Foreground="{DynamicResource MutedTextBrush}"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Button Grid.Column="2" Command="{Binding RegenerateSessionCommand}" Classes="secondary"
+                                                Padding="8,4" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding RegenerateSessionButton}" FontSize="10.5" />
+                                        </Button>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 接続状態カード -->
+                        <Border Classes="card">
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="📡 ステータス:" FontSize="11" FontWeight="Bold"
+                                           Foreground="{DynamicResource MutedTextBrush}" />
+                                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <ProgressBar IsIndeterminate="True" Width="20" Height="20"
+                                                 IsVisible="{Binding IsStatusBusy}" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusColor}"
+                                               FontSize="13" FontWeight="Bold" TextWrapping="Wrap"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- ヒントカード -->
+                        <Border Classes="subcard">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="{Binding QrCodeHint}" FontSize="11"
+                                           Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding NetworkTroubleHint}" FontSize="10.5"
+                                           Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- ============================================== -->
+                    <!-- 右カラム: モード別パネル (受信 / 送信) -->
+                    <!-- ============================================== -->
+                    <Grid Grid.Column="1">
+
+                        <!-- ============================================== -->
+                        <!-- A. 受信モード パネル (スマホ → PC) -->
+                        <!-- ============================================== -->
+                        <StackPanel Spacing="12" IsVisible="{Binding IsUploadMode}">
+
+                            <!-- カード1: 保存先フォルダー設定 -->
+                            <Border Classes="card">
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="{Binding TargetFolderTitle}" FontSize="13" FontWeight="Bold"
+                                               Foreground="{DynamicResource PrimaryTextBrush}" />
+                                    <TextBox Text="{Binding UploadFolderPath}" IsReadOnly="True" FontSize="11.5" />
+                                    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+                                        <Button Command="{Binding ChangeUploadFolderCommand}" Classes="secondary">
+                                            <TextBlock Text="{Binding ChangeFolderButton}" FontSize="11.5" />
+                                        </Button>
+                                        <Button Command="{Binding OpenUploadFolderCommand}" Classes="primary">
+                                            <TextBlock Text="{Binding OpenFolderButton}" FontSize="11.5" />
+                                        </Button>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- カード2: 簡単な使い方 -->
+                            <Border Classes="card">
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="{Binding InstructionsTitle}" FontSize="13" FontWeight="Bold"
+                                               Foreground="{DynamicResource PrimaryTextBrush}" />
+                                    <StackPanel Spacing="4" Margin="4,2,0,0">
+                                        <TextBlock Text="{Binding InstructionStep1}" FontSize="12"
+                                                   Foreground="{DynamicResource PrimaryTextBrush}" TextWrapping="Wrap" />
+                                        <TextBlock Text="{Binding InstructionStep2}" FontSize="12"
+                                                   Foreground="{DynamicResource PrimaryTextBrush}" TextWrapping="Wrap" />
+                                        <TextBlock Text="{Binding InstructionStep3}" FontSize="12"
+                                                   Foreground="{DynamicResource PrimaryTextBrush}" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                    <Border Background="{DynamicResource AccentBadgeBrush}" CornerRadius="6" Padding="10,6" Margin="0,4,0,0">
+                                        <TextBlock Text="{Binding InstructionsNote}" FontSize="11"
+                                                   Foreground="{DynamicResource AccentBadgeTextBrush}" TextWrapping="Wrap" />
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- カード3: 受信ファイル一覧 -->
+                            <Border Classes="card">
+                                <StackPanel Spacing="8">
+                                    <Grid ColumnDefinitions="*, Auto, Auto" ColumnSpacing="8">
+                                        <TextBlock Grid.Column="0" Text="{Binding ReceivedFilesTitle}" FontSize="13"
+                                                   FontWeight="Bold" Foreground="{DynamicResource PrimaryTextBrush}"
+                                                   VerticalAlignment="Center" />
+                                        <Button Grid.Column="1" Command="{Binding RefreshReceivedFilesCommand}" Classes="secondary">
+                                            <TextBlock Text="{Binding RefreshListButton}" FontSize="11" />
+                                        </Button>
+                                        <Button Grid.Column="2" Command="{Binding ClearReceivedFilesCommand}" Classes="secondary">
+                                            <TextBlock Text="{Binding ClearListButton}" FontSize="11" />
+                                        </Button>
+                                    </Grid>
+
+                                    <!-- ファイルがまだない場合のメッセージ (高さ固定でガタつきを防止) -->
+                                    <Border Classes="subcard" IsVisible="{Binding !HasReceivedFiles}" Margin="0,4,0,0" Height="56" Padding="10">
+                                        <TextBlock Text="{Binding NoReceivedFiles}" FontSize="12"
+                                                   Foreground="{DynamicResource MutedTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <!-- 受信済みアイテムリスト -->
+                                    <ItemsControl ItemsSource="{Binding ReceivedFiles}" IsVisible="{Binding HasReceivedFiles}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Classes="subcard" Margin="0,0,0,6" Padding="10,8">
+                                                    <Grid ColumnDefinitions="Auto, *, Auto, Auto" ColumnSpacing="10" VerticalAlignment="Center">
+                                                        <TextBlock Grid.Column="0" Text="{Binding TypeIcon}" FontSize="18"
+                                                                   VerticalAlignment="Center" />
+                                                        <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                                            <TextBlock Text="{Binding FileName}" FontSize="13" FontWeight="Bold"
+                                                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                                                       TextTrimming="CharacterEllipsis" />
+                                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                                <TextBlock Text="{Binding FormattedSize}" FontSize="11"
+                                                                           Foreground="{DynamicResource MutedTextBrush}" />
+                                                                <TextBlock Text="•" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" />
+                                                                <TextBlock Text="{Binding FormattedTime}" FontSize="11"
+                                                                           Foreground="{DynamicResource MutedTextBrush}" />
+                                                            </StackPanel>
+                                                        </StackPanel>
+
+                                                        <!-- 保存済みバッジ -->
+                                                        <Border Grid.Column="2" Background="#ECFDF5" BorderBrush="#A7F3D0"
+                                                                BorderThickness="1" CornerRadius="4" Padding="6,2"
+                                                                VerticalAlignment="Center">
+                                                            <TextBlock Text="保存済" FontSize="10.5" FontWeight="Bold"
+                                                                       Foreground="#059669" />
+                                                        </Border>
+
+                                                        <!-- 開くボタン -->
+                                                        <Button Grid.Column="3"
+                                                                Command="{Binding $parent[Window].((vm:MainViewModel)DataContext).OpenFileCommand}"
+                                                                CommandParameter="{Binding FullPath}"
+                                                                Classes="secondary" Padding="10,4" VerticalAlignment="Center">
+                                                            <TextBlock Text="開く" FontSize="11" />
+                                                        </Button>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- ============================================== -->
+                        <!-- B. 送信モード パネル (PC → スマホ) -->
+                        <!-- ============================================== -->
+                        <StackPanel Spacing="12" IsVisible="{Binding IsDownloadMode}">
+
+                            <!-- カード1: 共有フォルダー設定 -->
+                            <Border Classes="card">
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="{Binding DownloadFolderTitle}" FontSize="13" FontWeight="Bold"
+                                               Foreground="{DynamicResource PrimaryTextBrush}" />
+                                    <TextBox Text="{Binding DownloadFolderPath}" IsReadOnly="True" FontSize="11.5" />
+                                    <!-- ボタン群 (受信側と完全同一のサイズ・配置) -->
+                                    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+                                        <Button Command="{Binding ChangeDownloadFolderCommand}" Classes="secondary">
+                                            <TextBlock Text="{Binding ChangeFolderButton}" FontSize="11.5" />
+                                        </Button>
+                                        <Button Command="{Binding OpenDownloadFolderCommand}" Classes="primary">
+                                            <TextBlock Text="{Binding OpenFolderButton}" FontSize="11.5" />
+                                        </Button>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- カード2: 簡単な使い方 -->
+                            <Border Classes="card">
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="{Binding DownloadInstructionsTitle}" FontSize="13" FontWeight="Bold"
+                                               Foreground="{DynamicResource PrimaryTextBrush}" />
+                                    <StackPanel Spacing="4" Margin="4,2,0,0">
+                                        <TextBlock Text="{Binding DownloadStep1}" FontSize="12"
+                                                   Foreground="{DynamicResource PrimaryTextBrush}" TextWrapping="Wrap" />
+                                        <TextBlock Text="{Binding DownloadStep2}" FontSize="12"
+                                                   Foreground="{DynamicResource PrimaryTextBrush}" TextWrapping="Wrap" />
+                                        <TextBlock Text="{Binding DownloadStep3}" FontSize="12"
+                                                   Foreground="{DynamicResource PrimaryTextBrush}" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                    <!-- セキュリティ注記 (受信側と完全同一のバッジ風構造) -->
+                                    <Border Background="{DynamicResource AccentBadgeBrush}" CornerRadius="6" Padding="10,6" Margin="0,4,0,0">
+                                        <TextBlock Text="{Binding InstructionsNote}" FontSize="11"
+                                                   Foreground="{DynamicResource AccentBadgeTextBrush}" TextWrapping="Wrap" />
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- カード3: 共有ファイル一覧 -->
+                            <Border Classes="card">
+                                <StackPanel Spacing="8">
+                                    <Grid ColumnDefinitions="*, Auto, Auto" ColumnSpacing="8">
+                                        <TextBlock Grid.Column="0" Text="{Binding SharedFilesTitle}" FontSize="13"
+                                                   FontWeight="Bold" Foreground="{DynamicResource PrimaryTextBrush}"
+                                                   VerticalAlignment="Center" />
+                                        <Button Grid.Column="1" Command="{Binding AddFilesToShareCommand}" Classes="primary">
+                                            <TextBlock Text="{Binding AddFilesButton}" FontSize="11" />
+                                        </Button>
+                                        <Button Grid.Column="2" Command="{Binding RefreshSharedFilesCommand}" Classes="secondary">
+                                            <TextBlock Text="{Binding RefreshListButton}" FontSize="11" />
+                                        </Button>
+                                    </Grid>
+
+                                    <!-- ファイルがまだない場合のメッセージ (高さ固定でガタつきを防止) -->
+                                    <Border Classes="subcard" IsVisible="{Binding !HasSharedFiles}" Margin="0,4,0,0" Height="56" Padding="10">
+                                        <TextBlock Text="{Binding NoSharedFiles}" FontSize="12"
+                                                   Foreground="{DynamicResource MutedTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <!-- 共有ファイルリスト -->
+                                    <ItemsControl ItemsSource="{Binding SharedFiles}" IsVisible="{Binding HasSharedFiles}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Classes="subcard" Margin="0,0,0,6" Padding="10,8">
+                                                    <Grid ColumnDefinitions="Auto, *, Auto, Auto" ColumnSpacing="10" VerticalAlignment="Center">
+                                                        <TextBlock Grid.Column="0" Text="{Binding TypeIcon}" FontSize="18"
+                                                                   VerticalAlignment="Center" />
+                                                        <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                                            <TextBlock Text="{Binding FileName}" FontSize="13" FontWeight="Bold"
+                                                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                                                       TextTrimming="CharacterEllipsis" />
+                                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                                <TextBlock Text="{Binding FormattedSize}" FontSize="11"
+                                                                           Foreground="{DynamicResource MutedTextBrush}" />
+                                                                <TextBlock Text="•" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" />
+                                                                <TextBlock Text="{Binding FormattedTime}" FontSize="11"
+                                                                           Foreground="{DynamicResource MutedTextBrush}" />
+                                                            </StackPanel>
+                                                        </StackPanel>
+
+                                                        <!-- 開くボタン -->
+                                                        <Button Grid.Column="2"
+                                                                Command="{Binding $parent[Window].((vm:MainViewModel)DataContext).OpenFileCommand}"
+                                                                CommandParameter="{Binding FullPath}"
+                                                                Classes="secondary" Padding="10,4" VerticalAlignment="Center">
+                                                            <TextBlock Text="開く" FontSize="11" />
+                                                        </Button>
+
+                                                        <!-- 削除ボタン -->
+                                                        <Button Grid.Column="3"
+                                                                Command="{Binding $parent[Window].((vm:MainViewModel)DataContext).DeleteSharedFileCommand}"
+                                                                CommandParameter="{Binding FullPath}"
+                                                                Classes="secondary" Background="#FEE2E2" Foreground="#DC2626"
+                                                                Padding="8,4" VerticalAlignment="Center">
+                                                            <TextBlock Text="🗑️" FontSize="11" />
+                                                        </Button>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                    </Grid>
+                </Grid>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+
+        <!-- ======================================================== -->
+        <!-- アプリ情報モーダル (オーバーレイ) -->
+        <!-- ======================================================== -->
+        <Border Background="#99000000" IsVisible="{Binding IsAboutModalVisible}">
+            <Border Classes="card" Width="440" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    BoxShadow="0 8 32 0 #40000000" Padding="20">
+                <StackPanel Spacing="14">
+                    <!-- ヘッダー (アイコン + タイトル + ✕ボタン) -->
+                    <Grid ColumnDefinitions="Auto, *, Auto" VerticalAlignment="Center">
+                        <Image Grid.Column="0" Source="/Assets/title_icon.png" Width="32" Height="32" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Text="{Binding AppTitle}" FontSize="18" FontWeight="Bold"
+                                   Foreground="{DynamicResource PrimaryTextBrush}" Margin="10,0,0,0" VerticalAlignment="Center" />
+                        <Button Grid.Column="2" Command="{Binding CloseAboutCommand}" Classes="secondary"
+                                Width="30" Height="30" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                            <TextBlock Text="✕" FontSize="13" FontWeight="Bold" />
+                        </Button>
+                    </Grid>
+
+                    <Separator Height="1" Background="{DynamicResource CardBorderBrush}" />
+
+                    <!-- バージョン -->
+                    <TextBlock Text="{Binding AppVersionText}" FontSize="13" FontWeight="SemiBold"
+                               Foreground="{DynamicResource PrimaryTextBrush}" />
+
+                    <!-- 説明文 -->
+                    <TextBlock Text="{Binding AboutAppDescription}" FontSize="12"
+                               Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" />
+
+                    <!-- リンクボタン -->
+                    <StackPanel Spacing="8" Margin="0,4,0,0">
+                        <Button Command="{Binding OpenHomepageCommand}" Classes="secondary" HorizontalAlignment="Stretch">
+                            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                                <TextBlock Text="🌐" FontSize="13" />
+                                <TextBlock Text="{Binding HomepageLabel}" FontSize="12" />
+                            </StackPanel>
+                        </Button>
+
+                        <Button Command="{Binding OpenInstagramCommand}" Classes="secondary" HorizontalAlignment="Stretch">
+                            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                                <TextBlock Text="📷 Instagram (開発者情報)" FontSize="12" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- 閉じるボタン -->
+                    <Button Command="{Binding CloseAboutCommand}" Classes="primary" HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Center" Margin="0,6,0,0">
+                        <TextBlock Text="{Binding CloseButton}" FontSize="13" />
+                    </Button>
+                </StackPanel>
+            </Border>
+        </Border>
+
+    </Grid>
+</Window>

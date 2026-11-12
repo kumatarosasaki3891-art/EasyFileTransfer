@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <DefineConstants>$(DefineConstants);AVALONIA</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <!-- EasyFileTransfer (MAUI) からのロジック・モデル共有リンク -->
+  <ItemGroup>
+    <Compile Include="..\EasyFileTransfer\Models\ReceivedFileInfo.cs" Link="Models\ReceivedFileInfo.cs" />
+    <Compile Include="..\EasyFileTransfer\Models\SharedFileInfo.cs" Link="Models\SharedFileInfo.cs" />
+    <Compile Include="..\EasyFileTransfer\Services\FileTransferServer.cs" Link="Services\FileTransferServer.cs" />
+    <Compile Include="..\EasyFileTransfer\Services\LocalizationService.cs" Link="Services\LocalizationService.cs" />
+    <Compile Include="..\EasyFileTransfer\Services\QrCodeGenerator.cs" Link="Services\QrCodeGenerator.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.1.5" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.5" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.5" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.5" />
+    <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3">
+      <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+      <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="SkiaSharp" Version="3.119.4" />
+  </ItemGroup>
+</Project>
