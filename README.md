@@ -112,3 +112,9 @@ dotnet build EasyFileTransfer/EasyFileTransfer.csproj -f net10.0-windows10.0.190
 
 - 使いやすさ重視でローカルネットワーク内（HTTP）での通信としています。カフェや公衆Wi-Fiなど信頼できないネットワーク上では使用しないでください。
 - 初めての公開のため、コードや設計に改善点があるかと思います。気づいた点があれば Issue や Pull Request などで教えていただけると嬉しいです！
+
+## ライセンス
+
+MIT Licenseの下で公開しています。詳細は [LICENSE](LICENSE) をご覧ください。
+
+
