@@ -53,6 +53,6 @@ modules:
       - type: git
         url: https://github.com/kumatarosasaki3891-art/EasyFileTransfer.git
         tag: v1.1.0
-        commit: f4c67ac182122cf58a2fd14fefcbf856b85dc70a
+        commit: ff42a1b12f1493671134399c9cb5c8214dd302d6
       # オフラインビルド用 NuGet パッケージ定義
       - nuget-sources.json
