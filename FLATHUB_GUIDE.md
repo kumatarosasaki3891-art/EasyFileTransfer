@@ -35,10 +35,10 @@ sudo apt update
 sudo apt install flatpak flatpak-builder
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
-# ランタイムとSDK、.NET 10 SDK拡張機能のインストール
-flatpak install flathub org.freedesktop.Platform//24.08
-flatpak install flathub org.freedesktop.Sdk//24.08
-flatpak install flathub org.freedesktop.Sdk.Extension.dotnet10//24.08
+# ランタイムとSDK、.NET 10 SDK拡張機能のインストール（25.08 / 24.08）
+flatpak install flathub org.freedesktop.Platform//25.08
+flatpak install flathub org.freedesktop.Sdk//25.08
+flatpak install flathub org.freedesktop.Sdk.Extension.dotnet10//25.08
 ```
 
 ### ローカルソースからのビルド手順
