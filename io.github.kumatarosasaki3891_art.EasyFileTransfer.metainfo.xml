@@ -20,11 +20,17 @@
     <p>Key Features:</p>
     <ul>
       <li>No mobile app required: Simply scan the QR code using any smartphone camera to open the web-based transfer UI in the mobile browser.</li>
+      <li xml:lang="ja">スマホ側に専用アプリ不要: スマホの標準カメラでQRコードをスキャンするだけで、Webブラウザ上で送受信画面が開きます。</li>
       <li>Bidirectional transfer: Send photos and files from your phone to your PC (up to 2GB per file), or download shared files from your PC to your phone.</li>
+      <li xml:lang="ja">双方向ファイル転送: スマホからPCへの写真・ファイル送信（1ファイル最大2GBまで対応）、PCからスマホへのファイル共有・ダウンロードに対応。</li>
       <li>Zero configuration: Built-in lightweight HTTP server requires no administrator or root privileges and automatically discovers available ports.</li>
+      <li xml:lang="ja">管理者権限不要の軽量HTTPサーバー: 管理者権限（root/UAC）や複雑なポート設定なしで手軽に起動できます。</li>
       <li>One-time session protection: Generated 8-digit session tokens bound to the first connecting client prevent unauthorized access from other devices on the same Wi-Fi.</li>
+      <li xml:lang="ja">1:1使い捨てセッション保護: 初回接続端末のIPアドレスと有効期限付きセッショントークンを紐づけ、同一LAN内の他端末からのアクセスをブロックします。</li>
       <li>Automatic collision handling: Files with identical names are automatically renamed with sequential suffixes to prevent accidental overwrites.</li>
+      <li xml:lang="ja">同名ファイルの重複回避: 同名ファイルが存在する場合は自動で (1) (2) のように別名保存されます。</li>
       <li>Multi-language support: Built-in 11 languages (Japanese, English, Simplified Chinese, Traditional Chinese, Korean, Vietnamese, Spanish, German, French, Portuguese, Italian).</li>
+      <li xml:lang="ja">11言語対応: 日本語、英語、簡体字中国語、繁体字中国語、韓国語、ベトナム語、スペイン語、ドイツ語、フランス語、ポルトガル語、イタリア語にUI・Web画面ともに対応。</li>
     </ul>
     <p xml:lang="ja">
       EasyFileTransfer は、スマホのカメラでQRコードを読み取るだけで、スマホとPCの間でファイルを双方向に送受信できる軽量デスクトップツールです。
@@ -33,14 +39,6 @@
       外部のクラウドサーバーやインターネット回線を経由せず、同一Wi-Fi（ローカルLAN）内だけで直接通信するため、プライバシーが保護され高速なファイル転送が可能です。
     </p>
     <p xml:lang="ja">主な特徴:</p>
-    <ul xml:lang="ja">
-      <li>スマホ側に専用アプリ不要: スマホの標準カメラでQRコードをスキャンするだけで、Webブラウザ上で送受信画面が開きます。</li>
-      <li>双方向ファイル転送: スマホからPCへの写真・ファイル送信（1ファイル最大2GBまで対応）、PCからスマホへのファイル共有・ダウンロードに対応。</li>
-      <li>管理者権限不要の軽量HTTPサーバー: 管理者権限（root/UAC）や複雑なポート設定なしで手軽に起動できます。</li>
-      <li>1:1使い捨てセッション保護: 初回接続端末のIPアドレスと有効期限付きセッショントークンを紐づけ、同一LAN内の他端末からのアクセスをブロックします。</li>
-      <li>同名ファイルの重複回避: 同名ファイルが存在する場合は自動で (1) (2) のように別名保存されます。</li>
-      <li>11言語対応: 日本語、英語、簡体字中国語、繁体字中国語、韓国語、ベトナム語、スペイン語、ドイツ語、フランス語、ポルトガル語、イタリア語にUI・Web画面ともに対応。</li>
-    </ul>
   </description>
 
   <launchable type="desktop-id">io.github.kumatarosasaki3891_art.EasyFileTransfer.desktop</launchable>
