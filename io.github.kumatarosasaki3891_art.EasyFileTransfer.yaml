@@ -6,7 +6,6 @@ command: EasyFileTransfer.Linux
 
 finish-args:
   # Avalonia UI / Wayland / X11
-  - --socket=wayland
   - --socket=x11
   - --share=ipc
   - --device=dri
@@ -15,7 +14,7 @@ finish-args:
   # ダウンロードフォルダーへのアクセス（受信ファイルの保存および共有ファイルの読み込み）
   - --filesystem=xdg-download
   # ポータル連携（ファイル選択ダイアログ、既定アプリでのフォルダー/ファイル起動）
-  - --talk-name=org.freedesktop.portal.Desktop
+  #- --talk-name=org.freedesktop.portal.Desktop
 
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.dotnet10
@@ -53,6 +52,6 @@ modules:
       - type: git
         url: https://github.com/kumatarosasaki3891-art/EasyFileTransfer.git
         tag: v1.1.0
-        commit: ff42a1b12f1493671134399c9cb5c8214dd302d6
+        commit: 7a4f82fbe7fe018d3f3aef211f6aadbce1819275
       # オフラインビルド用 NuGet パッケージ定義
       - nuget-sources.json
