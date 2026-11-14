@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.kumatarosasaki3891_art.EasyFileTransfer</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+
+  <name>EasyFileTransfer</name>
+  <name xml:lang="ja">EasyFileTransfer (簡単ファイル転送)</name>
+
+  <summary>Easily transfer files between PC and smartphone via QR code on local Wi-Fi</summary>
+  <summary xml:lang="ja">QRコードを読み取るだけでスマホとPC間で直接ファイル送受信ができるローカルファイル転送ツール</summary>
+
+  <description>
+    <p>
+      EasyFileTransfer is a lightweight desktop utility that enables seamless bidirectional file sharing between your PC and mobile devices simply by scanning a QR code.
+    </p>
+    <p>
+      It operates entirely within your local Wi-Fi network without routing traffic through external cloud servers or the Internet, ensuring high privacy, zero subscription fees, and full LAN transfer speeds.
+    </p>
+    <p>Key Features:</p>
+    <ul>
+      <li>No mobile app required: Simply scan the QR code using any smartphone camera to open the web-based transfer UI in the mobile browser.</li>
+      <li>Bidirectional transfer: Send photos and files from your phone to your PC (up to 2GB per file), or download shared files from your PC to your phone.</li>
+      <li>Zero configuration: Built-in lightweight HTTP server requires no administrator or root privileges and automatically discovers available ports.</li>
+      <li>One-time session protection: Generated 8-digit session tokens bound to the first connecting client prevent unauthorized access from other devices on the same Wi-Fi.</li>
+      <li>Automatic collision handling: Files with identical names are automatically renamed with sequential suffixes to prevent accidental overwrites.</li>
+      <li>Multi-language support: Built-in 11 languages (Japanese, English, Simplified Chinese, Traditional Chinese, Korean, Vietnamese, Spanish, German, French, Portuguese, Italian).</li>
+    </ul>
+    <p xml:lang="ja">
+      EasyFileTransfer は、スマホのカメラでQRコードを読み取るだけで、スマホとPCの間でファイルを双方向に送受信できる軽量デスクトップツールです。
+    </p>
+    <p xml:lang="ja">
+      外部のクラウドサーバーやインターネット回線を経由せず、同一Wi-Fi（ローカルLAN）内だけで直接通信するため、プライバシーが保護され高速なファイル転送が可能です。
+    </p>
+    <p xml:lang="ja">主な特徴:</p>
+    <ul xml:lang="ja">
+      <li>スマホ側に専用アプリ不要: スマホの標準カメラでQRコードをスキャンするだけで、Webブラウザ上で送受信画面が開きます。</li>
+      <li>双方向ファイル転送: スマホからPCへの写真・ファイル送信（1ファイル最大2GBまで対応）、PCからスマホへのファイル共有・ダウンロードに対応。</li>
+      <li>管理者権限不要の軽量HTTPサーバー: 管理者権限（root/UAC）や複雑なポート設定なしで手軽に起動できます。</li>
+      <li>1:1使い捨てセッション保護: 初回接続端末のIPアドレスと有効期限付きセッショントークンを紐づけ、同一LAN内の他端末からのアクセスをブロックします。</li>
+      <li>同名ファイルの重複回避: 同名ファイルが存在する場合は自動で (1) (2) のように別名保存されます。</li>
+      <li>11言語対応: 日本語、英語、簡体字中国語、繁体字中国語、韓国語、ベトナム語、スペイン語、ドイツ語、フランス語、ポルトガル語、イタリア語にUI・Web画面ともに対応。</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">io.github.kumatarosasaki3891_art.EasyFileTransfer.desktop</launchable>
+
+  <url type="homepage">https://github.com/kumatarosasaki3891-art/EasyFileTransfer</url>
+  <url type="bugtracker">https://github.com/kumatarosasaki3891-art/EasyFileTransfer/issues</url>
+  <url type="vcs-browser">https://github.com/kumatarosasaki3891-art/EasyFileTransfer</url>
+
+  <developer id="io.github.kumatarosasaki3891_art">
+    <name>Sasaki Kumataro</name>
+  </developer>
+
+  <screenshots>
+    <screenshot type="default">
+      <image type="source">https://raw.githubusercontent.com/kumatarosasaki3891-art/EasyFileTransfer/main/docs/screenshots/main_window.png</image>
+      <caption>Main transfer window displaying the QR code</caption>
+      <caption xml:lang="ja">QRコードを表示したファイル送受信メイン画面</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source">https://raw.githubusercontent.com/kumatarosasaki3891-art/EasyFileTransfer/main/docs/screenshots/easy_file_transfer_receive.png</image>
+      <caption>Receive mode: Uploading files from smartphone to PC</caption>
+      <caption xml:lang="ja">受信モード：スマホからPCへファイル送信</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source">https://raw.githubusercontent.com/kumatarosasaki3891-art/EasyFileTransfer/main/docs/screenshots/easy_file_transfer_send.png</image>
+      <caption>Send mode: Sharing files from PC to smartphone</caption>
+      <caption xml:lang="ja">送信モード：PCからスマホへファイル共有</caption>
+    </screenshot>
+  </screenshots>
+
+  <provides>
+    <binary>EasyFileTransfer.Linux</binary>
+  </provides>
+
+  <content_rating type="oars-1.1" />
+
+  <releases>
+    <release version="1.1.0" date="2026-11-14">
+      <description>
+        <p>Initial release on Flathub with Linux desktop support, bidirectional local Wi-Fi transfer, and multi-language support.</p>
+        <p xml:lang="ja">Linuxデスクトップに対応したFlathub初版リリース。ローカルWi-Fiでの双方向ファイル送受信および11言語に対応。</p>
+      </description>
+    </release>
+  </releases>
+</component>

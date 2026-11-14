@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=EasyFileTransfer
+Name[ja]=EasyFileTransfer (簡単ファイル転送)
+GenericName=File Transfer Tool
+GenericName[ja]=ファイル転送ツール
+Comment=Transfer files between PC and smartphone via QR code over local Wi-Fi
+Comment[ja]=QRコードを読み取るだけでスマホとPC間で直接ファイル送受信
+Exec=EasyFileTransfer.Linux
+Icon=io.github.kumatarosasaki3891_art.EasyFileTransfer
+Terminal=false
+Categories=Utility;FileTools;Network;
+Keywords=file;transfer;qr;wifi;local;sharing;download;upload;
+Keywords[ja]=ファイル;転送;QRコード;Wi-Fi;共有;ダウンロード;アップロード;
+StartupWMClass=EasyFileTransfer.Linux
