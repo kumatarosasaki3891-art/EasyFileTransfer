@@ -1,7 +1,31 @@
 # EasyFileTransfer（簡単ファイル転送）
 
+[![Releases](https://img.shields.io/github/v/release/kumatarosasaki3891-art/EasyFileTransfer?label=Linux%20Release&color=0284c7)](https://github.com/kumatarosasaki3891-art/EasyFileTransfer/releases)
+[![Microsoft Store](https://img.shields.io/badge/Microsoft%20Store-Windows%2010%2F11-f97316)](https://apps.microsoft.com/detail/9N4G1LLL2VZP?hl=ja&gl=JP&ocid=pdpshare)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 スマホとPCの間で、QRコードを読み取るだけでファイルを双方向にやり取りできるローカルファイル転送ツールです。  
 外部サーバーやインターネット回線を経由せず、同じ Wi-Fi（LAN）内だけで直接通信する仕組みになっています。
+
+> A fast, local-first file transfer tool between your smartphone and PC (Windows / Linux) via QR code—no cloud, no account, and no mobile app required.
+
+---
+
+## 📥 ダウンロード / Download
+
+- **🐧 Linux版 (AppImage / バイナリ)**: [GitHub Releases からダウンロード](https://github.com/kumatarosasaki3891-art/EasyFileTransfer/releases/latest)
+- **🪟 Windows 10 / 11版**: [Microsoft Store から無料で入手](https://apps.microsoft.com/detail/9N4G1LLL2VZP?hl=ja&gl=JP&ocid=pdpshare)
+
+---
+
+## 📸 画面イメージ / Screenshots
+
+<!-- ↓ GitHubの編集画面にスクリーンショット画像やデモ動画(.webm)をドラッグ＆ドロップして貼り付けてください -->
+| PC側メイン画面（受信・QR表示） | スマホ側ブラウザ画面（アプリ不要） |
+| :---: | :---: |
+| <img width="540" alt="easy_file_transfer_top" src="https://github.com/user-attachments/assets/cef76133-bc57-4d38-a136-3ec70bf3acaa" /> | <img width="240" alt="easy_file_transfer_send" src="https://github.com/user-attachments/assets/7d16bc33-5c0c-48b7-8232-b49f0eb5169e" /> |
+
+---
 
 > 初めてオープンソースとして公開してみます。  
 > 勉強しながら組んだコードなので拙い部分もあるかと思いますが、同じようなツールを作ってみたい方の参考になれば嬉しいです！
@@ -31,7 +55,7 @@
 ## 使い方
 
 1. PC とスマホを**同じ Wi-Fi（同一ネットワーク）**に接続します。
-2. PC でアプリを起動します。
+2. PC でアプリを起動します（Linux版バイナリの場合は `chmod +x` で実行権限を付与して起動）。
 3. **スマホ → PC に送りたいとき**
    - 「受信 (スマホ → PC)」タブを開き、スマホの標準カメラでQRコードをスキャンします。
    - 開いたWeb画面で写真やファイルを選んで送信すると、PCの保存先フォルダー（初期値: `Downloads/EasyFileTransfer`）へ保存されます。
@@ -42,7 +66,7 @@
 > **つながらないときのヒント**
 > - PCに仮想ネットワーク（WSL / Docker / Hyper-V / VPN など）があると別IPが選ばれることがあるため、画面の「🔄 IP切替」ボタンを試してみてください。
 > - ルーターの「プライバシーセパレーター（AP分離）」が有効になっていると端末同士が通信できないため、無効化されているかご確認ください。
-> - Windows ファイアウォール等の確認が出た場合は、プライベートネットワークでの通信を許可してください。
+> - ファイアウォール（Windows Defender / `ufw` 等）のブロックが出た場合は、ローカルネットワークでの通信ポートを許可してください。
 
 ---
 
@@ -65,56 +89,3 @@ EasyFileTransfer/
 ├── build-msix-easyfiletransfer.cmd    # 上記スクリプトのランチャー
 ├── EasyFileTransfer.sln               # ソリューションファイル
 └── EasyFileTransfer.slnx              # XML ソリューションファイル
-```
-
----
-
-## 開発環境・ビルド方法
-
-### 必要な環境
-- [.NET 10 SDK](https://dotnet.microsoft.com/)
-- Windows版 (.NET MAUI) をビルドする場合: MAUI ワークロード (`dotnet workload install maui-windows`)
-
-### Linux / クロスプラットフォーム版 (Avalonia UI) の実行
-
-```bash
-dotnet run --project EasyFileTransfer.Linux/EasyFileTransfer.Linux.csproj
-```
-
-単一バイナリとして発行する場合（`linux-x64` の例）：
-
-```bash
-dotnet publish EasyFileTransfer.Linux/EasyFileTransfer.Linux.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true
-```
-
-詳細は [EasyFileTransfer.Linux/README.md](EasyFileTransfer.Linux/README.md) もあわせてご覧ください。
-
-### Windows版 (.NET MAUI) のビルド
-
-```bash
-dotnet build EasyFileTransfer/EasyFileTransfer.csproj -f net10.0-windows10.0.19041.0
-```
-
----
-
-## 公開にあたっての補足（Microsoft Store 設定について）
-
-本リポジトリ公開にあたり、作者個人の **Microsoft Store 公開用ID・パブリッシャー情報・署名用証明書 (`.pfx` / `.cer`)** は削除、または `XXXX` に置き換えています。  
-手元で MSIX パッケージをビルド・署名したい場合は、以下のファイルを必要に応じてご自身の値に書き換え、署名用証明書をローカルに配置してください。
-
-- `EasyFileTransfer/EasyFileTransfer.csproj`（`ApplicationId`）
-- `EasyFileTransfer/Platforms/Windows/Package.appxmanifest`（`Identity` の `Name` / `Publisher`、`PublisherDisplayName`）
-- `build-msix-easyfiletransfer.ps1` / `EasyFileTransfer/STORE_PUBLISH_GUIDE.md`
-
----
-
-## 注意事項
-
-- 使いやすさ重視でローカルネットワーク内（HTTP）での通信としています。カフェや公衆Wi-Fiなど信頼できないネットワーク上では使用しないでください。
-- 初めての公開のため、コードや設計に改善点があるかと思います。気づいた点があれば Issue や Pull Request などで教えていただけると嬉しいです！
-
-## ライセンス
-
-MIT Licenseの下で公開しています。詳細は [LICENSE](LICENSE) をご覧ください。
-
-
