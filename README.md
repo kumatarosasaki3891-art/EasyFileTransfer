@@ -13,7 +13,7 @@
 
 ## 📥 ダウンロード / Download
 
-- **🐧 Linux版 (AppImage / バイナリ)**: [GitHub Releases からダウンロード](https://github.com/kumatarosasaki3891-art/EasyFileTransfer/releases/latest)
+- **🐧 Linux版 (Flatpakバンドル)**: [GitHub Releases からダウンロード](https://github.com/kumatarosasaki3891-art/EasyFileTransfer/releases/latest)
 - **🪟 Windows 10 / 11版**: [Microsoft Store から無料で入手](https://apps.microsoft.com/detail/9N4G1LLL2VZP?hl=ja&gl=JP&ocid=pdpshare)
 
 ---
@@ -55,7 +55,7 @@
 ## 使い方
 
 1. PC とスマホを**同じ Wi-Fi（同一ネットワーク）**に接続します。
-2. PC でアプリを起動します（Linux版バイナリの場合は `chmod +x` で実行権限を付与して起動）。
+2. PC でアプリを起動します（Linux版は `flatpak install ./EasyFileTransfer-1.1.0-v3.flatpak` でインストールしてから起動）。
 3. **スマホ → PC に送りたいとき**
    - 「受信 (スマホ → PC)」タブを開き、スマホの標準カメラでQRコードをスキャンします。
    - 開いたWeb画面で写真やファイルを選んで送信すると、PCの保存先フォルダー（初期値: `Downloads/EasyFileTransfer`）へ保存されます。
