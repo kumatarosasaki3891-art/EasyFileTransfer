@@ -16,7 +16,7 @@ It communicates directly within the same Wi-Fi (LAN) network, without going thro
 ## 📥 Download
 
 - **🐧 Linux (Flatpak bundle)**: [Download from GitHub Releases](https://github.com/kumatarosasaki3891-art/EasyFileTransfer/releases/latest)
-- **🪟 Windows 10 / 11**: [Get it free from the Microsoft Store](https://apps.microsoft.com/detail/9N4G1LLL2VZP?hl=ja&gl=JP&ocid=pdpshare)
+- **🪟 Windows 10 / 11**: [Get it free from the Microsoft Store](https://apps.microsoft.com/detail/9N4G1LLL2VZP?hl=us&gl=US&ocid=pdpshare)
 
 ---
 
