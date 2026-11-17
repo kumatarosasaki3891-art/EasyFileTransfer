@@ -4,6 +4,8 @@
 [![Microsoft Store](https://img.shields.io/badge/Microsoft%20Store-Windows%2010%2F11-f97316)](https://apps.microsoft.com/detail/9N4G1LLL2VZP?hl=ja&gl=JP&ocid=pdpshare)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+[English](README_EN.md) | 日本語
+
 スマホとPCの間で、QRコードを読み取るだけでファイルを双方向にやり取りできるローカルファイル転送ツールです。  
 外部サーバーやインターネット回線を経由せず、同じ Wi-Fi（LAN）内だけで直接通信する仕組みになっています。
 
