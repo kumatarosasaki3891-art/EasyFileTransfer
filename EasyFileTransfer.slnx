@@ -8,5 +8,6 @@
     <Platform Solution="*|ARM64" Project="ARM64" />
     <Platform Solution="*|x64" Project="x64" />
   </Project>
+  <Project Path="EasyFileTransfer.Cli/EasyFileTransfer.Cli.csproj" />
   <Project Path="EasyFileTransfer.Linux/EasyFileTransfer.Linux.csproj" Id="6247eb09-1b3c-49b3-9dc5-80cfad122869" />
 </Solution>

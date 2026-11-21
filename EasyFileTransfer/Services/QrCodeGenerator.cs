@@ -1,5 +1,7 @@
 using System.Text;
+#if !CLI
 using SkiaSharp;
+#endif
 
 namespace EasyFileTransfer.Services;
 
@@ -33,6 +35,7 @@ public static class QrCodeGenerator
         new(7, 0b01, 196, 156, 40, [6, 22, 38])// Version 7-L (最大 154 bytes)
     ];
 
+#if !CLI
     /// <summary>
     /// 渡されたテキスト（URLなど）をQRコードのPNG画像（バイト配列）にして返します。
     /// Linux版(Avalonia)などでもそのまま使えるようにしています。
@@ -72,8 +75,9 @@ public static class QrCodeGenerator
         using var data = image.Encode(SKEncodedImageFormat.Png, 100);
         return data.ToArray();
     }
+#endif
 
-#if !AVALONIA
+#if !AVALONIA && !CLI
     /// <summary>
     /// MAUIの Image コントロールにそのまま貼れる ImageSource としてQRコードを生成します。
     /// </summary>

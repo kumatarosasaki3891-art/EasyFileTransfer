@@ -31,10 +31,12 @@ public sealed class LocalizationService : INotifyPropertyChanged
     public static Func<string, string, string>? ExternalPreferenceGetter { get; set; }
     public static Action<string, string>? ExternalPreferenceSetter { get; set; }
 
+    private static readonly Lazy<LocalizationService> _lazyInstance = new(() => new LocalizationService());
+
     /// <summary>
     /// シングルトンとしてアプリ全体で1つのインスタンスを共有しています
     /// </summary>
-    public static LocalizationService Instance { get; } = new();
+    public static LocalizationService Instance => _lazyInstance.Value;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -153,7 +155,7 @@ public sealed class LocalizationService : INotifyPropertyChanged
             {
                 saved = ExternalPreferenceGetter(LanguagePreference, string.Empty);
             }
-#if !AVALONIA
+#if !AVALONIA && !CLI
             else
             {
                 saved = Preferences.Default.Get(LanguagePreference, string.Empty);
@@ -222,7 +224,7 @@ public sealed class LocalizationService : INotifyPropertyChanged
             {
                 ExternalPreferenceSetter(LanguagePreference, code);
             }
-#if !AVALONIA
+#if !AVALONIA && !CLI
             else
             {
                 Preferences.Default.Set(LanguagePreference, code);

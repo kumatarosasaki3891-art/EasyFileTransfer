@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>EasyFileTransfer.Cli</RootNamespace>
+    <AssemblyName>eft</AssemblyName>
+    <Version>1.1.0</Version>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <DefineConstants>$(DefineConstants);CLI</DefineConstants>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>false</SelfContained>
+    <PublishTrimmed>false</PublishTrimmed>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="EasyFileTransfer.Cli.Tests" />
+  </ItemGroup>
+
+  <!-- EasyFileTransfer からのコアロジック・モデル共有リンク -->
+  <ItemGroup>
+    <Compile Include="..\EasyFileTransfer\Models\ReceivedFileInfo.cs" Link="Models\ReceivedFileInfo.cs" />
+    <Compile Include="..\EasyFileTransfer\Models\SharedFileInfo.cs" Link="Models\SharedFileInfo.cs" />
+    <Compile Include="..\EasyFileTransfer\Services\FileTransferServer.cs" Link="Services\FileTransferServer.cs" />
+    <Compile Include="..\EasyFileTransfer\Services\LocalizationService.cs" Link="Services\LocalizationService.cs" />
+    <Compile Include="..\EasyFileTransfer\Services\QrCodeGenerator.cs" Link="Services\QrCodeGenerator.cs" />
+  </ItemGroup>
+
+</Project>

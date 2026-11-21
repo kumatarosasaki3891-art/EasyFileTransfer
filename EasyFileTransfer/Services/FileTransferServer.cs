@@ -101,6 +101,11 @@ public sealed class FileTransferServer : IDisposable
     public event Action? ClientConnected;
 
     /// <summary>
+    /// スマホ側が有効なセッションでWeb画面を開いたときに、接続元IPとともに発火します。
+    /// </summary>
+    public event Action<string>? ClientIpConnected;
+
+    /// <summary>
     /// スマホ側からファイルのアップロード受信が開始されたときに発火します。
     /// </summary>
     public event Action<string>? UploadStarted;
@@ -114,6 +119,11 @@ public sealed class FileTransferServer : IDisposable
     /// スマホ側からファイルがダウンロードされたときに発火します。
     /// </summary>
     public event Action<string>? FileDownloaded;
+
+    /// <summary>
+    /// セッション検証が失敗したときに接続元IPと理由とともに発火します。
+    /// </summary>
+    public event Action<string, SessionValidationResult>? SessionValidationFailed;
 
     /// <summary>
     /// エラー発生時に発火します。
@@ -335,6 +345,13 @@ public sealed class FileTransferServer : IDisposable
                 return;
             }
 
+            // favicon.ico はトークン無しでブラウザが自動取得するため早期返却
+            if (method == "GET" && path.StartsWith("/favicon.ico", StringComparison.OrdinalIgnoreCase))
+            {
+                await WriteHttpResponseAsync(stream, "404 Not Found", "text/plain", Encoding.ASCII.GetBytes("Not Found"), token);
+                return;
+            }
+
             // クエリパラメータの解析
             var queryParams = ParseQueryString(path);
             var reqToken = queryParams.GetValueOrDefault("token") ?? headerToken;
@@ -348,20 +365,27 @@ public sealed class FileTransferServer : IDisposable
             // ==========================================
             if (method == "GET" && (path == "/" || path.StartsWith("/?")))
             {
-                try
-                {
-                    ClientConnected?.Invoke();
-                }
-                catch { }
-
                 // セッションエラーの場合、エラーHTMLを表示
                 if (validation != SessionValidationResult.Valid)
                 {
+                    try
+                    {
+                        SessionValidationFailed?.Invoke(clientIp, validation);
+                    }
+                    catch { }
+
                     var errorHtml = BuildSessionErrorHtml(validation, langCode);
                     var errBytes = Encoding.UTF8.GetBytes(errorHtml);
                     await WriteHttpResponseAsync(stream, "403 Forbidden", "text/html; charset=utf-8", errBytes, token);
                     return;
                 }
+
+                try
+                {
+                    ClientConnected?.Invoke();
+                    ClientIpConnected?.Invoke(clientIp);
+                }
+                catch { }
 
                 // 正常: モバイルWebページHTMLを返却
                 var modeParam = queryParams.GetValueOrDefault("mode", "upload").ToLowerInvariant();
@@ -376,6 +400,12 @@ public sealed class FileTransferServer : IDisposable
             // ==========================================
             if (validation != SessionValidationResult.Valid)
             {
+                try
+                {
+                    SessionValidationFailed?.Invoke(clientIp, validation);
+                }
+                catch { }
+
                 string errMsg = validation switch
                 {
                     SessionValidationResult.Expired => "Session expired",
@@ -585,7 +615,7 @@ public sealed class FileTransferServer : IDisposable
     /// リクエストに付いてきたトークンとアクセス元IPが、今のセッションと一致するかチェックします。
     /// 最初に接続してきた端末のIPを記憶して、他の端末からの横入りを防いでいます。
     /// </summary>
-    private SessionValidationResult ValidateSession(string? token, string clientIp)
+    internal SessionValidationResult ValidateSession(string? token, string clientIp)
     {
         if (CurrentSession == null || string.IsNullOrWhiteSpace(token))
         {
