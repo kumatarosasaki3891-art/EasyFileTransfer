@@ -27,6 +27,10 @@ It communicates directly within the same Wi-Fi (LAN) network, without going thro
 | :---: | :---: |
 | <img width="540" alt="easy_file_transfer_top" src="https://github.com/user-attachments/assets/cef76133-bc57-4d38-a136-3ec70bf3acaa" /> | <img width="240" alt="easy_file_transfer_send" src="https://github.com/user-attachments/assets/7d16bc33-5c0c-48b7-8232-b49f0eb5169e" /> |
 
+| CLI (`eft`) terminal screen (QR code display & waiting for transfer) |
+| :---: |
+| <img width="780" alt="easy_file_transfer_receive_cli" src="docs/screenshots/easy_file_transfer_receive_cli.png" /> |
+
 ---
 
 > This is my first attempt at publishing something as open source.  
