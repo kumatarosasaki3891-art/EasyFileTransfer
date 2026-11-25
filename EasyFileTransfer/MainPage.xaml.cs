@@ -988,7 +988,7 @@ public partial class MainPage : ContentPage
         var loc = LocalizationService.Instance;
         var ver = !string.IsNullOrWhiteSpace(AppInfo.Current.VersionString)
             ? AppInfo.Current.VersionString
-            : (System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.1.0");
+            : (System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.1.1");
         AboutVersionLabel.Text = $"{loc.Get("VersionLabel")}: {ver}";
     }
 
