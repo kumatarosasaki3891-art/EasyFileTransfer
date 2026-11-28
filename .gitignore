@@ -1,6 +1,7 @@
 # Build output
 [Bb]in/
 [Oo]bj/
+dist/
 
 # Visual Studio and VS Code local state
 .vs/

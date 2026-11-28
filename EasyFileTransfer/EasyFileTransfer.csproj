@@ -76,4 +76,32 @@
 		</ItemGroup>
 	</Target>
 
+	<!-- MauiIcon の内容変更(タイムスタンプが古いコピー上書き等)でも確実に Resizetizer を再実行させる -->
+	<Target Name="HashMauiIconsForResizetizer"
+			AfterTargets="ResizetizeCollectItems"
+			BeforeTargets="ResizetizeImages"
+			Condition="'$(_ResizetizerIsWindowsAppSdk)' == 'True'">
+		<GetFileHash Files="@(MauiIcon)">
+			<Output TaskParameter="Items" ItemName="_MauiIconWithHash" />
+		</GetFileHash>
+		<WriteLinesToFile
+			File="$(IntermediateOutputPath)mauiicon.hash"
+			Lines="@(_MauiIconWithHash->'%(Identity)=%(FileHash)')"
+			Overwrite="true"
+			WriteOnlyWhenDifferent="true" />
+		<ReadLinesFromFile File="$(IntermediateOutputPath)mauiicon.hash.applied"
+						   Condition="Exists('$(IntermediateOutputPath)mauiicon.hash.applied')">
+			<Output TaskParameter="Lines" PropertyName="_PrevMauiIconHash" />
+		</ReadLinesFromFile>
+		<ReadLinesFromFile File="$(IntermediateOutputPath)mauiicon.hash"
+						   Condition="Exists('$(IntermediateOutputPath)mauiicon.hash')">
+			<Output TaskParameter="Lines" PropertyName="_CurrMauiIconHash" />
+		</ReadLinesFromFile>
+		<Delete Files="$(IntermediateOutputPath)mauiimage.stamp;$(IntermediateOutputPath)mauiimage.outputs;$(IntermediateOutputPath)mauimanifest.stamp"
+				Condition="'$(_PrevMauiIconHash)' != '$(_CurrMauiIconHash)'" />
+		<Copy SourceFiles="$(IntermediateOutputPath)mauiicon.hash"
+			  DestinationFiles="$(IntermediateOutputPath)mauiicon.hash.applied"
+			  Condition="'$(_PrevMauiIconHash)' != '$(_CurrMauiIconHash)'" />
+	</Target>
+
 </Project>

@@ -49,12 +49,14 @@ Partner Center で予約された製品識別情報です（公開用に実際�
 ```powershell
 .\build-msix-easyfiletransfer.ps1 -Mode Store
 ```
-またはプロジェクトルートの `build-msix.ps1` を使用：
+（別の出力先を指定したい場合は `-OutputDir "C:\path\to\dir"` を指定できます）
+
+またはプロジェクトフォルダ内のラッパー `EasyFileTransfer\build-msix.ps1` を使用：
 ```powershell
-.\build-msix.ps1 -Target EasyFileTransfer -Mode Store
+.\EasyFileTransfer\build-msix.ps1 -Mode Store
 ```
 - **生成先**:
-  `EasyFileTransfer\bin\Release\net10.0-windows10.0.19041.0\win-x64\Upload\EasyFileTransfer_1.1.0.0_Test\EasyFileTransfer_1.1.0.0_x64.msix`
+  `dist\EasyFileTransfer_1.1.2.0_x64.msix`
   （※ Microsoft Store の審査パイプラインへアップロードするファイルです）
 
 #### 2. ローカルテスト用ビルド (自己署名付き Sideload)
@@ -63,14 +65,14 @@ Partner Center で予約された製品識別情報です（公開用に実際�
 .\build-msix-easyfiletransfer.ps1 -Mode Sideload
 ```
 - **生成先**:
-  `EasyFileTransfer\AppPackages\EasyFileTransfer_1.1.0.0_Test\EasyFileTransfer_1.1.0.0_x64.msix`
+  `dist\Sideload\EasyFileTransfer_1.1.2.0_x64.msix`
   および同フォルダ内に `EasyFileTransfer.cer`（公開証明書）が出力されます。
 - **ローカルインストール手順**:
   1. `EasyFileTransfer.cer` をダブルクリック
   2. 「証明書のインストール」をクリック
   3. 保存場所に「ローカル コンピューター」を選択
   4. 証明書ストアに「信頼されたルート証明機関」を指定して完了
-  5. `EasyFileTransfer_1.1.0.0_x64.msix` をダブルクリックしてインストール
+  5. `EasyFileTransfer_1.1.2.0_x64.msix` をダブルクリックしてインストール
 
 ---
 
@@ -79,7 +81,7 @@ Partner Center で予約された製品識別情報です（公開用に実際�
 1. [Microsoft Partner Center ダッシュボード](https://partner.microsoft.com/dashboard) にサインインします。
 2. アプリ一覧から **EasyFileTransfer**（Store ID: `XXXXXXXXXXXX`）を選択し、「申請の更新」または新しい申請を開きます。
 3. **「パッケージ」ページ**:
-   - `EasyFileTransfer\bin\Release\net10.0-windows10.0.19041.0\win-x64\Upload\...\EasyFileTransfer_1.1.0.0_x64.msix` をドラッグ＆ドロップしてアップロードします。
+   - `dist\EasyFileTransfer_1.1.2.0_x64.msix` をドラッグ＆ドロップしてアップロードします。
    - 既存の v1.0 パッケージから v1.1 へ更新されます。
 4. **「価格と提供状況」ページ**:
    - 基本価格: **「無料」** を選択
