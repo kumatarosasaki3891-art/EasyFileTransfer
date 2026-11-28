@@ -6,7 +6,7 @@
   IgnorableNamespaces="uap rescap">
 
   <!-- Microsoft Store 公開用の識別情報はサンプル値（XXXX）に置き換えています -->
-  <Identity Name="XXXXXXXX.XXXXXXXXXXXXX" Publisher="CN=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" Version="1.1.1.0" />
+  <Identity Name="XXXXXXXX.XXXXXXXXXXXXX" Publisher="CN=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" Version="1.1.2.0" />
 
   <Properties>
     <DisplayName>簡単ファイル転送</DisplayName>

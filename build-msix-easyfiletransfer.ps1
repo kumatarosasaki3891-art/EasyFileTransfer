@@ -1,4 +1,4 @@
-param(
+﻿param(
     [ValidateSet("Store", "Sideload")]
     [string]$Mode = "Store",
 
@@ -37,6 +37,11 @@ if (Test-Path $targetObjDir) {
     Get-ChildItem -Path $targetObjDir -Filter "mauisplash.*" -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
 }
 
+$publishDir = Join-Path $easyDir "bin\$Configuration\net10.0-windows10.0.19041.0\win-$Platform\publish"
+if (Test-Path $publishDir) {
+    Remove-Item -Path $publishDir -Recurse -Force
+}
+
 if ($Mode -eq "Sideload") {
     $outBase = Join-Path $easyDir "AppPackages"
     Write-Host "`nBuilding Sideload MSIX (Signed with local certificate)..." -ForegroundColor Green
@@ -55,7 +60,9 @@ if ($Mode -eq "Sideload") {
         -p:PackageCertificateKeyFile="$certPath" `
         -p:PackageCertificatePassword="" `
         -p:AppxPackageSigningEnabled=true `
-        -p:AppxSymbolPackageEnabled=false
+        -p:AppxSymbolPackageEnabled=false `
+        -p:DebugType=none `
+        -p:DebugSymbols=false
 
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Build failed with exit code $LASTEXITCODE"
@@ -91,6 +98,9 @@ if ($Mode -eq "Sideload") {
 } else {
     # Store Submission Mode
     $uploadDir = Join-Path $easyDir "bin\$Configuration\net10.0-windows10.0.19041.0\win-$Platform\Upload"
+    if (Test-Path $uploadDir) {
+        Remove-Item -Path $uploadDir -Recurse -Force
+    }
     Write-Host "`nBuilding Microsoft Store Submission Package (.msix)..." -ForegroundColor Green
     dotnet publish $projectPath `
         -f net10.0-windows10.0.19041.0 `
@@ -100,7 +110,9 @@ if ($Mode -eq "Sideload") {
         -p:AppxPackageDir="$uploadDir\" `
         -p:UapAppxPackageBuildMode=StoreUpload `
         -p:AppxPackageSigningEnabled=false `
-        -p:AppxSymbolPackageEnabled=false
+        -p:AppxSymbolPackageEnabled=false `
+        -p:DebugType=none `
+        -p:DebugSymbols=false
 
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Build failed with exit code $LASTEXITCODE"

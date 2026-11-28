@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <Folder Include="Models\" />
-    <AvaloniaResource Include="Assets\**" />
+    <AvaloniaResource Include="Assets\**" Exclude="Assets\Store\**" />
   </ItemGroup>
 
   <!-- EasyFileTransfer (MAUI) からのロジック・モデル共有リンク -->
